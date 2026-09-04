@@ -1,0 +1,436 @@
+import { useState } from 'react'
+import { useForm, ValidationError } from '@formspree/react'
+import Button from './Button'
+import { site } from '../data/site'
+
+const cleaningTypes = [
+  'Standard House Cleaning',
+  'Deep Cleaning',
+  'Move-In / Move-Out',
+  'Airbnb Cleaning',
+  'Office Cleaning',
+  'Carpet & Upholstery',
+  'Window Cleaning',
+]
+
+const propertyTypes = ['Residential', 'Commercial']
+
+const sizes = [
+  'Under 1,000 sq ft',
+  '1,000–2,000 sq ft',
+  '2,000–3,500 sq ft',
+  '3,500+ sq ft',
+]
+
+const frequencies = ['One-time', 'Weekly', 'Biweekly', 'Monthly']
+
+const totalSteps = 4
+
+function QuoteForm() {
+  const [step, setStep] = useState(1)
+
+  const [state, handleSubmit] = useForm(site.formspreeId)
+
+  const [formData, setFormData] = useState({
+    cleaningType: '',
+    propertyType: '',
+    size: '',
+    frequency: '',
+    date: '',
+    name: '',
+    email: '',
+    phone: '',
+    details: '',
+  })
+
+  const update = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }))
+  }
+
+  const next = () => {
+    setStep((current) => Math.min(current + 1, totalSteps))
+  }
+
+  const back = () => {
+    setStep((current) => Math.max(current - 1, 1))
+  }
+
+  if (state.succeeded) {
+    return (
+      <div className="rounded-3xl border border-ink/10 bg-surface p-10 text-center">
+        <h3 className="mb-3 font-display text-2xl text-ink">
+          Thanks, {formData.name.split(' ')[0] || 'there'}!
+        </h3>
+
+        <p className="text-stone">
+          We've received your request and will follow up at{' '}
+          {formData.email || 'the email you provided'} within one business day.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-3xl border border-ink/10 bg-surface p-6 md:p-10">
+      {/* Progress indicator */}
+      <div className="mb-8 flex items-center gap-2">
+        {Array.from({ length: totalSteps }).map((_, i) => (
+          <div
+            key={i}
+            className={`h-1.5 flex-1 rounded-full ${
+              i < step ? 'bg-accent' : 'bg-ink/10'
+            }`}
+          />
+        ))}
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        {/* STEP 1 */}
+        {step === 1 && (
+          <div>
+            <h3 className="mb-6 font-display text-2xl text-ink">
+              What type of cleaning do you need?
+            </h3>
+
+            <div className="mb-8 grid gap-3 sm:grid-cols-2">
+              {cleaningTypes.map((type) => (
+                <button
+                  type="button"
+                  key={type}
+                  onClick={() => update('cleaningType', type)}
+                  className={`rounded-xl border px-5 py-4 text-left text-sm transition ${
+                    formData.cleaningType === type
+                      ? 'border-accent bg-accent-light/40 text-ink'
+                      : 'border-ink/10 text-ink/80 hover:border-ink/30'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+
+            <h3 className="mb-4 font-semibold text-ink">
+              Residential or commercial?
+            </h3>
+
+            <div className="mb-8 flex gap-3">
+              {propertyTypes.map((type) => (
+                <button
+                  type="button"
+                  key={type}
+                  onClick={() => update('propertyType', type)}
+                  className={`rounded-full border px-5 py-3 text-sm transition ${
+                    formData.propertyType === type
+                      ? 'border-accent bg-accent-light/40 text-ink'
+                      : 'border-ink/10 text-ink/80 hover:border-ink/30'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+
+            <Button
+              type="button"
+              variant="primary"
+              onClick={next}
+              disabled={!formData.cleaningType || !formData.propertyType}
+              className="w-full sm:w-auto"
+            >
+              Continue
+            </Button>
+          </div>
+        )}
+
+        {/* STEP 2 */}
+        {step === 2 && (
+          <div>
+            <h3 className="mb-6 font-display text-2xl text-ink">
+              Tell us about the space
+            </h3>
+
+            <p className="mb-4 font-semibold text-ink">
+              Approximate size
+            </p>
+
+            <div className="mb-8 grid gap-3 sm:grid-cols-2">
+              {sizes.map((size) => (
+                <button
+                  type="button"
+                  key={size}
+                  onClick={() => update('size', size)}
+                  className={`rounded-xl border px-5 py-4 text-left text-sm transition ${
+                    formData.size === size
+                      ? 'border-accent bg-accent-light/40 text-ink'
+                      : 'border-ink/10 text-ink/80 hover:border-ink/30'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+
+            <p className="mb-4 font-semibold text-ink">
+              How often?
+            </p>
+
+            <div className="mb-8 flex flex-wrap gap-3">
+              {frequencies.map((frequency) => (
+                <button
+                  type="button"
+                  key={frequency}
+                  onClick={() => update('frequency', frequency)}
+                  className={`rounded-full border px-5 py-3 text-sm transition ${
+                    formData.frequency === frequency
+                      ? 'border-accent bg-accent-light/40 text-ink'
+                      : 'border-ink/10 text-ink/80 hover:border-ink/30'
+                  }`}
+                >
+                  {frequency}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={back}
+              >
+                Back
+              </Button>
+
+              <Button
+                type="button"
+                variant="primary"
+                onClick={next}
+                disabled={!formData.size || !formData.frequency}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3 */}
+        {step === 3 && (
+          <div>
+            <h3 className="mb-6 font-display text-2xl text-ink">
+              When would you like service?
+            </h3>
+
+            <label
+              className="mb-2 block font-semibold text-ink"
+              htmlFor="date"
+            >
+              Preferred date
+            </label>
+
+            <input
+              id="date"
+              name="preferred_date"
+              type="date"
+              required
+              value={formData.date}
+              onChange={(e) => update('date', e.target.value)}
+              className="mb-8 w-full rounded-xl border border-ink/10 bg-base px-5 py-4 text-ink"
+            />
+
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={back}
+              >
+                Back
+              </Button>
+
+              <Button
+                type="button"
+                variant="primary"
+                onClick={next}
+                disabled={!formData.date}
+              >
+                Continue
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 4 */}
+        {step === 4 && (
+          <div>
+            <h3 className="mb-6 font-display text-2xl text-ink">
+              Almost done — how can we reach you?
+            </h3>
+
+            {/* These send the earlier answers to Formspree */}
+            <input
+              type="hidden"
+              name="cleaning_type"
+              value={formData.cleaningType}
+            />
+
+            <input
+              type="hidden"
+              name="property_type"
+              value={formData.propertyType}
+            />
+
+            <input
+              type="hidden"
+              name="property_size"
+              value={formData.size}
+            />
+
+            <input
+              type="hidden"
+              name="frequency"
+              value={formData.frequency}
+            />
+
+            <div className="mb-4 grid gap-4 sm:grid-cols-2">
+              <div>
+                <label
+                  className="mb-1 block text-sm text-stone"
+                  htmlFor="name"
+                >
+                  Full name
+                </label>
+
+                <input
+                  id="name"
+                  name="name"
+                  required
+                  value={formData.name}
+                  onChange={(e) => update('name', e.target.value)}
+                  className="w-full rounded-xl border border-ink/10 bg-base px-4 py-3 text-ink"
+                />
+
+                <ValidationError
+                  prefix="Name"
+                  field="name"
+                  errors={state.errors}
+                  className="mt-1 text-sm text-red-600"
+                />
+              </div>
+
+              <div>
+                <label
+                  className="mb-1 block text-sm text-stone"
+                  htmlFor="phone"
+                >
+                  Phone
+                </label>
+
+                <input
+                  id="phone"
+                  name="phone"
+                  required
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => update('phone', e.target.value)}
+                  className="w-full rounded-xl border border-ink/10 bg-base px-4 py-3 text-ink"
+                />
+
+                <ValidationError
+                  prefix="Phone"
+                  field="phone"
+                  errors={state.errors}
+                  className="mt-1 text-sm text-red-600"
+                />
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label
+                className="mb-1 block text-sm text-stone"
+                htmlFor="email"
+              >
+                Email
+              </label>
+
+              <input
+                id="email"
+                name="email"
+                required
+                type="email"
+                value={formData.email}
+                onChange={(e) => update('email', e.target.value)}
+                className="w-full rounded-xl border border-ink/10 bg-base px-4 py-3 text-ink"
+              />
+
+              <ValidationError
+                prefix="Email"
+                field="email"
+                errors={state.errors}
+                className="mt-1 text-sm text-red-600"
+              />
+            </div>
+
+            <div className="mb-8">
+              <label
+                className="mb-1 block text-sm text-stone"
+                htmlFor="details"
+              >
+                Additional details (optional)
+              </label>
+
+              <textarea
+                id="details"
+                name="details"
+                rows={3}
+                value={formData.details}
+                onChange={(e) => update('details', e.target.value)}
+                className="w-full rounded-xl border border-ink/10 bg-base px-4 py-3 text-ink"
+              />
+
+              <ValidationError
+                prefix="Details"
+                field="details"
+                errors={state.errors}
+                className="mt-1 text-sm text-red-600"
+              />
+            </div>
+
+            {state.errors?.getFormErrors?.().length > 0 && (
+              <div className="mb-6 rounded-xl bg-red-50 p-4 text-sm text-red-700">
+                Something went wrong while submitting your request.
+                Please try again.
+              </div>
+            )}
+
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={back}
+                disabled={state.submitting}
+              >
+                Back
+              </Button>
+
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={
+                  state.submitting ||
+                  !formData.name ||
+                  !formData.email ||
+                  !formData.phone
+                }
+              >
+                {state.submitting ? 'Sending...' : 'Submit request'}
+              </Button>
+            </div>
+          </div>
+        )}
+      </form>
+    </div>
+  )
+}
+
+export default QuoteForm
