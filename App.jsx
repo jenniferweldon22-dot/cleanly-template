@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import ScrollToTop from './components/ScrollToTop'
+import ScrollToTop from './components/scrollToTop'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -11,7 +11,7 @@ import ReviewsPage from './pages/ReviewsPage'
 import ContactPage from './pages/ContactPage'
 import BlogPage from './pages/BlogPage'
 import BlogPostPage from './pages/BlogPostPage'
-import NotFound from './pages/NotFound'
+import NotFound from './pages/notfound'
 
 function App() {
   return (
