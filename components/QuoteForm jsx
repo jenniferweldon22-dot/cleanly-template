@@ -29,7 +29,7 @@ const totalSteps = 4
 function QuoteForm() {
   const [step, setStep] = useState(1)
 
-  const [state, handleSubmit] = useForm(site.formspreeId)
+  const [state, handleSubmit] = useForm(site?.formspreeId || 'placeholder')
 
   const [formData, setFormData] = useState({
     cleaningType: '',
@@ -64,7 +64,6 @@ function QuoteForm() {
         <h3 className="mb-3 font-display text-2xl text-ink">
           Thanks, {formData.name.split(' ')[0] || 'there'}!
         </h3>
-
         <p className="text-stone">
           We've received your request and will follow up at{' '}
           {formData.email || 'the email you provided'} within one business day.
@@ -267,7 +266,6 @@ function QuoteForm() {
               Almost done — how can we reach you?
             </h3>
 
-            {/* These send the earlier answers to Formspree */}
             <input
               type="hidden"
               name="cleaning_type"
