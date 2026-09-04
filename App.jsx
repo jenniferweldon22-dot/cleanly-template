@@ -1,5 +1,4 @@
 import { Routes, Route } from 'react-router-dom'
-import ScrollToTop from './components/scrollToTop'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Home from './pages/Home'
@@ -11,12 +10,11 @@ import ReviewsPage from './pages/ReviewsPage'
 import ContactPage from './pages/ContactPage'
 import BlogPage from './pages/BlogPage'
 import BlogPostPage from './pages/BlogPostPage'
-import NotFound from './pages/notfound'
+import NotFound from './components/NotFound'
 
 function App() {
   return (
     <div className="min-h-screen bg-base flex flex-col">
-      <ScrollToTop />
       <Navbar />
       <main className="flex-1">
         <Routes>
